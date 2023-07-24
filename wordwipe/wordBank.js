@@ -1,12 +1,8 @@
 const words = [
-	"b",
-	"ab",
-	"c",
-	"d",
+	"a",
 "aa",
 "aah",
 "aal",
-"a",
 "aalii",
 "aardvark",
 "aardvarks",
