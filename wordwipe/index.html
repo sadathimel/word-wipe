@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Word Wipe Game</title>
+    <style>
+        /* Add your CSS styles here */
+        /* For example, you can style the game grid with borders and colors */
+        /* Customize the appearance to your liking */
+
+        #grid {
+            display: grid;
+            grid-template-columns: repeat(8, 40px);
+            grid-template-rows: repeat(8, 40px);
+            gap: 2px;
+        }
+
+        .cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+            border: 1px solid #ccc;
+            background-color: #f0f0f0;
+        }
+
+        .selected {
+            background-color: yellow;
+            user-select: none;
+        }
+
+        .matched {
+            background-color: green;
+        }
+    </style>
+</head>
+<body>
+    <h1>Word Wipe Game</h1>
+    <p>Find the words hidden in the grid below:</p>
+
+    <div id="grid">
+        <!-- This is where the game grid will be generated -->
+    </div>
+
+    <!-- <script src="./wordBank.js"></script> -->
+    <script src="./script.js"></script>
+</body>
+</html>
