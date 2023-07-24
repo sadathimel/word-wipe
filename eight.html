@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Word Wipe Game</title>
+    <style>
+        /* Add your CSS styles here */
+        /* For example, you can style the game grid with borders and colors */
+        /* Customize the appearance to your liking */
+
+        #grid {
+            display: grid;
+            grid-template-columns: repeat(8, 40px);
+            grid-template-rows: repeat(8, 40px);
+            gap: 2px;
+        }
+
+        .cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+            border: 1px solid #ccc;
+            background-color: #f0f0f0;
+        }
+
+        .selected {
+            background-color: yellow;
+        }
+
+        .matched {
+            background-color: green;
+        }
+    </style>
+</head>
+<body>
+    <h1>Word Wipe Game</h1>
+    <p>Find the words hidden in the grid below:</p>
+
+    <div id="grid">
+        <!-- This is where the game grid will be generated -->
+    </div>
+
+    <script>
+        // Add your JavaScript code here
+        const words = ['A','B','C','WORD', 'WIPE', 'GAME', 'HTML5', 'CSS3', 'JAVASCRIPT', 'ONCLICK', 'MATCH', 'ARRAY'];
+        let selectedWord = '';
+        let timer;
+
+        function generateGrid() {
+            const grid = document.getElementById('grid');
+
+            for (let i = 0; i < 8; i++) {
+                for (let j = 0; j < 8; j++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    cell.dataset.row = i;
+                    cell.dataset.col = j;
+                    cell.textContent = randomLetter();
+                    grid.appendChild(cell);
+                }
+            }
+        }
+
+        function randomLetter() {
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            return alphabet[Math.floor(Math.random() * alphabet.length)];
+        }
+
+        function checkWordMatch() {
+            const grid = document.getElementById('grid');
+            const cells = grid.getElementsByClassName('selected');
+
+            let selectedText = '';
+            for (const cell of cells) {
+                selectedText += cell.textContent;
+            }
+
+            if (words.includes(selectedText)) {
+                for (const cell of cells) {
+                    cell.classList.add('matched');
+                }
+                alert(`Match: ${selectedText}`);
+                setTimeout(removeMatchedWord, 3000);
+            } else {
+                for (const cell of cells) {
+                    cell.classList.remove('selected');
+                }
+            }
+        }
+
+        function removeMatchedWord() {
+            const grid = document.getElementById('grid');
+            const cells = grid.getElementsByClassName('matched');
+
+            for (const cell of cells) {
+                cell.textContent = '';
+                cell.classList.remove('matched');
+            }
+
+            fillBlankCells();
+        }
+
+        function fillBlankCells() {
+            const grid = document.getElementById('grid');
+            const cells = grid.getElementsByClassName('cell');
+
+            for (let j = 0; j < 8; j++) {
+                const upperCells = [];
+                for (let i = 0; i < 8; i++) {
+                    const cell = cells[i * 8 + j];
+                    if (!cell.textContent) {
+                        upperCells.push(cell);
+                    } else if (upperCells.length > 0) {
+                        const blankCell = upperCells.pop();
+                        blankCell.textContent = cell.textContent;
+                        blankCell.classList.add('matched'); // Temporary class to animate filling
+                        cell.textContent = '';
+                        cell.classList.remove('matched');
+                    }
+                }
+
+                for (const cell of upperCells) {
+                    cell.textContent = randomLetter();
+                    cell.classList.add('matched'); // Temporary class to animate filling
+                }
+            }
+
+            setTimeout(() => {
+                const matchedCells = grid.getElementsByClassName('matched');
+                for (const cell of matchedCells) {
+                    cell.classList.remove('matched');
+                }
+            }, 1000);
+        }
+
+        function selectWord(event) {
+            const target = event.target;
+            if (target.classList.contains('cell')) {
+                target.classList.add('selected');
+
+                // Update selectedWord with current selection
+                const selectedCells = document.getElementsByClassName('selected');
+                selectedWord = '';
+                for (const cell of selectedCells) {
+                    selectedWord += cell.textContent;
+                }
+            }
+        }
+
+        const grid = document.getElementById('grid');
+        generateGrid();
+
+        grid.addEventListener('mousedown', selectWord);
+        grid.addEventListener('mouseover', selectWord);
+        grid.addEventListener('mouseup', checkWordMatch);
+    </script>
+</body>
+</html>
