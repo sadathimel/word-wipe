@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Word Wipe Game</title>
+    <style>
+      /* Add your CSS styles here */
+      /* For example, you can style the game grid with borders and colors */
+      /* Customize the appearance to your liking */
+
+      #grid {
+        display: grid;
+        grid-template-columns: repeat(8, 40px);
+        grid-template-rows: repeat(8, 40px);
+        gap: 2px;
+        grid-auto-flow: row;
+      }
+
+      .cell {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        font-weight: bold;
+        border: 1px solid #ccc;
+        background-color: #f0f0f0;
+      }
+
+      .selected {
+        background-color: yellow;
+        user-select: none;
+      }
+
+      .matched {
+        background-color: green;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Word Wipe Game</h1>
+    <p>Find the words hidden in the grid below:</p>
+
+    <div id="grid">
+      <!-- This is where the game grid will be generated -->
+    </div>
+
+    <script>
+      // Add your JavaScript code here
+      const words = [
+        "A",
+        "WORD",
+        "WIPE",
+        "GAME",
+        "HTML5",
+        "CSS3",
+        "JAVASCRIPT",
+        "ONCLICK",
+        "MATCH",
+        "ARRAY",
+      ];
+
+      function generateGrid() {
+        const grid = document.getElementById("grid");
+
+        for (let i = 0; i < 8; i++) {
+          for (let j = 0; j < 8; j++) {
+            const cell = document.createElement("div");
+            cell.classList.add("cell");
+            cell.dataset.row = i;
+            cell.dataset.col = j;
+            cell.textContent = randomLetter();
+            grid.appendChild(cell);
+          }
+        }
+      }
+
+      function randomLetter() {
+        const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        return alphabet[Math.floor(Math.random() * alphabet.length)];
+      }
+
+      let selectedWord = "";
+      let selectedCells = [];
+
+      function checkWordMatch() {
+        if (words.includes(selectedWord)) {
+          const matchedCells = selectedCells.slice(); // Create a copy of the selectedCells array
+          matchedCells.forEach((cell) => cell.classList.add("matched"));
+          alert(`Match: ${selectedWord}`);
+          // Remove the matched word from the grid
+          setTimeout(() => {
+            matchedCells.forEach((cell) => cell.remove());
+          }, 1000);
+        }
+        selectedWord = "";
+        selectedCells = [];
+      }
+
+      function handleCellMouseDown(event) {
+        isMouseDown = true;
+        selectCell(event);
+      }
+
+      function handleCellMouseOver(event) {
+        if (isMouseDown) {
+          selectCell(event);
+        }
+      }
+
+      function handleCellMouseUp() {
+        isMouseDown = false;
+        checkWordMatch();
+        clearSelection();
+      }
+
+      function selectCell(event) {
+        const target = event.target;
+        if (!target.classList.contains("cell")) return;
+        if (!target.classList.contains("selected")) {
+          target.classList.add("selected");
+          const letter = target.textContent;
+          selectedWord += letter;
+          selectedCells.push(target);
+        }
+      }
+
+      //   function selectCell(event) {
+      //     const target = event.target;
+      //     target.classList.add("selected");
+      //     selectedWord += target.textContent;
+      //     selectedCells.push(target);
+      //   }
+
+      function clearSelection() {
+        const selectedCells = document.querySelectorAll(".selected");
+        selectedCells.forEach((cell) => cell.classList.remove("selected"));
+        selectedWord = "";
+        selectedCells = [];
+      }
+
+      const grid = document.getElementById("grid");
+      generateGrid();
+
+      grid.addEventListener("mousedown", handleCellMouseDown);
+      grid.addEventListener("mouseover", handleCellMouseOver);
+      document.addEventListener("mouseup", handleCellMouseUp);
+    </script>
+  </body>
+</html>
