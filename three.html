@@ -1,116 +1,129 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Word Wipe Game</title>
     <style>
-        /* Add your CSS styles here */
-        /* For example, you can style the game grid with borders and colors */
-        /* Customize the appearance to your liking */
+      /* Add your CSS styles here */
+      /* For example, you can style the game grid with borders and colors */
+      /* Customize the appearance to your liking */
 
-        #grid {
-            display: grid;
-            grid-template-columns: repeat(8, 40px);
-            grid-template-rows: repeat(8, 40px);
-            gap: 2px;
-        }
+      #grid {
+        display: grid;
+        grid-template-columns: repeat(8, 40px);
+        grid-template-rows: repeat(8, 40px);
+        gap: 2px;
+      }
 
-        .cell {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            font-weight: bold;
-            border: 1px solid #ccc;
-            background-color: #f0f0f0;
-        }
+      .cell {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        font-weight: bold;
+        border: 1px solid #ccc;
+        background-color: #f0f0f0;
+      }
 
-        .selected {
-            background-color: yellow;
-        }
+      .selected {
+        background-color: yellow;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Word Wipe Game</h1>
     <p>Find the words hidden in the grid below:</p>
 
     <div id="grid">
-        <!-- This is where the game grid will be generated -->
+      <!-- This is where the game grid will be generated -->
     </div>
 
     <script>
-        // Add your JavaScript code here
-        const words = ['WORD', 'WIPE', 'GAME', 'HTML5', 'CSS3', 'JAVASCRIPT', 'ONCLICK', 'MATCH', 'ARRAY'];
+      // Add your JavaScript code here
+      const words = [
+        "A",
+        "WORD",
+        "WIPE",
+        "GAME",
+        "HTML5",
+        "CSS3",
+        "JAVASCRIPT",
+        "ONCLICK",
+        "MATCH",
+        "ARRAY",
+      ];
 
-        function generateGrid() {
-            const grid = document.getElementById('grid');
+      function generateGrid() {
+        const grid = document.getElementById("grid");
 
-            for (let i = 0; i < 8; i++) {
-                for (let j = 0; j < 8; j++) {
-                    const cell = document.createElement('div');
-                    cell.classList.add('cell');
-                    cell.dataset.row = i;
-                    cell.dataset.col = j;
-                    cell.textContent = randomLetter();
-                    grid.appendChild(cell);
-                }
-            }
+        for (let i = 0; i < 8; i++) {
+          for (let j = 0; j < 8; j++) {
+            const cell = document.createElement("div");
+            cell.classList.add("cell");
+            cell.dataset.row = i;
+            cell.dataset.col = j;
+            cell.textContent = randomLetter();
+            grid.appendChild(cell);
+          }
+        }
+      }
+
+      function randomLetter() {
+        const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        return alphabet[Math.floor(Math.random() * alphabet.length)];
+      }
+
+      function checkWordSelection() {
+        const selectedWord = window.getSelection().toString().trim();
+
+        // Get the start and end cell of the selection
+        const startCell = document.querySelector(".selected-start");
+        const endCell = document.querySelector(".selected-end");
+
+        // Check for horizontal and vertical matches
+        const horizontalMatch = getHorizontalMatch(startCell, endCell);
+        const verticalMatch = getVerticalMatch(startCell, endCell);
+
+        if (horizontalMatch || verticalMatch) {
+          alert(`Match: ${selectedWord}`);
         }
 
-        function randomLetter() {
-            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            return alphabet[Math.floor(Math.random() * alphabet.length)];
+        // Clear the selection
+        clearSelection();
+      }
+
+      function getHorizontalMatch(startCell, endCell) {
+        // ... (same as previous code)
+      }
+
+      function getVerticalMatch(startCell, endCell) {
+        // ... (same as previous code)
+      }
+
+      function highlightCells(event) {
+        const target = event.target;
+        if (!target.classList.contains("cell")) return;
+
+        if (!target.classList.contains("selected")) {
+          // If this is the first cell of selection
+          target.classList.add("selected", "selected-start");
+        } else {
+          // If this is the last cell of selection
+          target.classList.add("selected-end");
+          checkWordSelection();
         }
+      }
 
-        function checkWordSelection() {
-            const selectedWord = window.getSelection().toString().trim();
+      function clearSelection() {
+        const selectedCells = document.querySelectorAll(".selected");
+        selectedCells.forEach((cell) =>
+          cell.classList.remove("selected", "selected-start", "selected-end")
+        );
+      }
 
-            // Get the start and end cell of the selection
-            const startCell = document.querySelector('.selected-start');
-            const endCell = document.querySelector('.selected-end');
+      const grid = document.getElementById("grid");
+      generateGrid();
 
-            // Check for horizontal and vertical matches
-            const horizontalMatch = getHorizontalMatch(startCell, endCell);
-            const verticalMatch = getVerticalMatch(startCell, endCell);
-
-            if (horizontalMatch || verticalMatch) {
-                alert(`Match: ${selectedWord}`);
-            }
-
-            // Clear the selection
-            clearSelection();
-        }
-
-        function getHorizontalMatch(startCell, endCell) {
-            // ... (same as previous code)
-        }
-
-        function getVerticalMatch(startCell, endCell) {
-            // ... (same as previous code)
-        }
-
-        function highlightCells(event) {
-            const target = event.target;
-            if (!target.classList.contains('cell')) return;
-
-            if (!target.classList.contains('selected')) {
-                // If this is the first cell of selection
-                target.classList.add('selected', 'selected-start');
-            } else {
-                // If this is the last cell of selection
-                target.classList.add('selected-end');
-                checkWordSelection();
-            }
-        }
-
-        function clearSelection() {
-            const selectedCells = document.querySelectorAll('.selected');
-            selectedCells.forEach(cell => cell.classList.remove('selected', 'selected-start', 'selected-end'));
-        }
-
-        const grid = document.getElementById('grid');
-        generateGrid();
-
-        grid.addEventListener('click', highlightCells);
+      grid.addEventListener("click", highlightCells);
     </script>
-</body>
+  </body>
 </html>
