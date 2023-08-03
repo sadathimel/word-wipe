@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Word Wipe Game</title>
+    <style>
+      /* Add your CSS styles here */
+      /* For example, you can style the game grid with borders and colors */
+      /* Customize the appearance to your liking */
+
+      #grid {
+        display: grid;
+        grid-template-columns: repeat(8, 40px);
+        grid-template-rows: repeat(8, 40px);
+        gap: 2px;
+      }
+
+      .cell {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        font-weight: bold;
+        border: 1px solid #ccc;
+        background-color: #f0f0f0;
+        user-select: none; /* Prevent text selection inside cells */
+      }
+
+      .selected {
+        background-color: yellow;
+      }
+
+      .matched {
+        background-color: green;
+        text-decoration: line-through; /* Add a line-through style for matched words */
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Word Wipe Game</h1>
+    <p>Find the words hidden in the grid below:</p>
+
+    <div id="grid">
+      <!-- This is where the game grid will be generated -->
+    </div>
+
+    <script>
+      // Add your JavaScript code here
+      const words = [
+        "A",
+        "B",
+        "C",
+        "WORD",
+        "WIPE",
+        "GAME",
+        "HTML5",
+        "CSS3",
+        "JAVASCRIPT",
+        "ONCLICK",
+        "MATCH",
+        "ARRAY",
+      ];
+
+      function generateGrid() {
+        const grid = document.getElementById("grid");
+
+        for (let i = 0; i < 8; i++) {
+          for (let j = 0; j < 8; j++) {
+            const cell = document.createElement("div");
+            cell.classList.add("cell");
+            cell.dataset.row = i;
+            cell.dataset.col = j;
+            cell.textContent = randomLetter();
+            grid.appendChild(cell);
+          }
+        }
+      }
+
+      function randomLetter() {
+        const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        return alphabet[Math.floor(Math.random() * alphabet.length)];
+      }
+
+      function checkWordSelection() {
+        const selectedWord = window.getSelection().toString().trim();
+
+        if (selectedWord.length > 0) {
+          const selectedCells = document.querySelectorAll(".selected");
+          const selectedCellsArray = Array.from(selectedCells);
+
+          // Get the row and column arrays of the selected cells
+          const selectedRows = selectedCellsArray.map((cell) =>
+            parseInt(cell.dataset.row)
+          );
+          const selectedCols = selectedCellsArray.map((cell) =>
+            parseInt(cell.dataset.col)
+          );
+
+          // Check for horizontal and vertical matches
+          const horizontalMatch = checkHorizontalMatch(selectedRows);
+          const verticalMatch = checkVerticalMatch(selectedCols);
+
+          if (horizontalMatch || verticalMatch) {
+            alert(`Match: ${selectedWord}`);
+            selectedCellsArray.forEach((cell) => cell.classList.add("matched"));
+            removeMatchedWord(selectedRows, selectedCols);
+          }
+
+          selectedCellsArray.forEach((cell) =>
+            cell.classList.remove("selected")
+          );
+        }
+
+        window.getSelection().removeAllRanges();
+      }
+
+      function checkHorizontalMatch(selectedRows) {
+        return selectedRows.every((row) => row === selectedRows[0]);
+      }
+
+      function checkVerticalMatch(selectedCols) {
+        return selectedCols.every((col) => col === selectedCols[0]);
+      }
+
+      function removeMatchedWord(selectedRows, selectedCols) {
+        // Remove the matched word from the 'words' array
+        const selectedWord = words.find((word) => {
+          const letters = word.split("");
+          return (
+            letters.length === selectedRows.length &&
+            letters.every((letter, index) => {
+              return (
+                letter ===
+                document.querySelector(
+                  `[data-row="${selectedRows[index]}"][data-col="${selectedCols[index]}"]`
+                ).textContent
+              );
+            })
+          );
+        });
+
+        const matchedWordIndex = words.indexOf(selectedWord);
+        if (matchedWordIndex !== -1) {
+          words.splice(matchedWordIndex, 1);
+        }
+
+        // Shift the letters above the matched word down one row
+        for (let i = 0; i < selectedRows.length; i++) {
+          for (let row = selectedRows[i]; row > 0; row--) {
+            const cellAbove = document.querySelector(
+              `[data-row="${row - 1}"][data-col="${selectedCols[i]}"]`
+            );
+            const currentCell = document.querySelector(
+              `[data-row="${row}"][data-col="${selectedCols[i]}"]`
+            );
+            currentCell.textContent = cellAbove.textContent;
+          }
+        }
+
+        // Generate new random letters in the top row
+        for (let col = 0; col < 8; col++) {
+          const newLetter = randomLetter();
+          const topCell = document.querySelector(
+            `[data-row="0"][data-col="${col}"]`
+          );
+          topCell.textContent = newLetter;
+        }
+      }
+
+      function highlightCells(event) {
+        const target = event.target;
+        target.classList.add("selected");
+      }
+
+      function clearSelection(event) {
+        const selectedCells = document.querySelectorAll(".selected");
+        selectedCells.forEach((cell) => cell.classList.remove("selected"));
+      }
+
+      const grid = document.getElementById("grid");
+      generateGrid();
+
+      grid.addEventListener("mousedown", highlightCells);
+      grid.addEventListener("mouseover", highlightCells);
+      grid.addEventListener("mouseup", checkWordSelection);
+      document.addEventListener("mouseup", clearSelection);
+    </script>
+  </body>
+</html>

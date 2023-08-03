@@ -1,8 +1,5 @@
 const words = [
-	"a",
-"aa",
-"aah",
-"aal",
+    "a",
 "aalii",
 "aardvark",
 "aardvarks",
